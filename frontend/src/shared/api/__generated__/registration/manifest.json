@@ -1,0 +1,14 @@
+{
+  "endpoints": [
+    "usersRegisterCreate",
+    "usersRegisterConfirmCreate"
+  ],
+  "hooks": [
+    "useUsersRegisterCreateMutation",
+    "useUsersRegisterConfirmCreateMutation"
+  ],
+  "serverMethods": [
+    "usersRegisterCreate",
+    "usersRegisterConfirmCreate"
+  ]
+}

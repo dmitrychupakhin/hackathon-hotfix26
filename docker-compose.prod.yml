@@ -1,0 +1,138 @@
+services:
+
+  db:
+    container_name: db
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  django:
+    image: ${BACKEND_IMAGE}
+    restart: always
+    environment:
+      - DEBUG=False
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - VK_CLIENT_ID=${VK_CLIENT_ID}
+      - VK_REDIRECT_URI=${VK_REDIRECT_URI}
+      - AI_BASE_URL=http://ai:8000
+      - AI_SERVICE_KEY=${AI_SERVICE_KEY}
+      - APIMIRA_MODEL=${APIMIRA_MODEL:-openai/gpt-6-luna}
+      - AI_COMPARISON_TIMEOUT_SECONDS=${AI_COMPARISON_TIMEOUT_SECONDS:-1200}
+    depends_on:
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+    volumes:
+      - static_volume:/static
+      - ./backend/media:/media
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.create_connection(('127.0.0.1',8000),2); s.close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  ai:
+    image: ${AI_IMAGE}
+    restart: always
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--root-path", "/ai"]
+    environment:
+      AI_ENV: production
+      AI_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      AI_SOURCE_ROOT: /source
+      AI_SERVICE_KEY: ${AI_SERVICE_KEY}
+      APIMIRA_API_KEY: ${APIMIRA_API_KEY}
+      APIMIRA_BASE_URL: ${APIMIRA_BASE_URL:-https://apimira.com/v1}
+      APIMIRA_MODEL: ${APIMIRA_MODEL:-openai/gpt-6-luna}
+      AI_RUN_TIMEOUT_SECONDS: ${AI_RUN_TIMEOUT_SECONDS:-1200}
+      AI_LLM_TIMEOUT_SECONDS: ${AI_LLM_TIMEOUT_SECONDS:-180}
+      AI_LLM_MAX_OUTPUT_TOKENS: ${AI_LLM_MAX_OUTPUT_TOKENS:-8000}
+      AI_RATE_LIMIT_RETRIES: ${AI_RATE_LIMIT_RETRIES:-3}
+      APIMIRA_ENABLE_THINKING: ${APIMIRA_ENABLE_THINKING:-}
+      AI_ALLOWED_ORIGINS: https://company-corp.ru
+    depends_on:
+      django:
+        condition: service_healthy
+    volumes:
+      - ./backend/media:/source:ro
+      - ai-cache:/data
+
+  chat-worker:
+    image: ${BACKEND_IMAGE}
+    restart: always
+    entrypoint: ["python", "manage.py", "run_chat_worker"]
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - AI_BASE_URL=http://ai:8000
+      - AI_SERVICE_KEY=${AI_SERVICE_KEY}
+      - APIMIRA_MODEL=${APIMIRA_MODEL:-openai/gpt-6-luna}
+      - AI_COMPARISON_TIMEOUT_SECONDS=${AI_COMPARISON_TIMEOUT_SECONDS:-1200}
+    depends_on:
+      django:
+        condition: service_healthy
+      ai:
+        condition: service_started
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    restart: always
+    environment:
+      API_ORIGIN: http://django:8000
+      AI_ORIGIN: http://ai:8000
+    depends_on:
+      - django
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
+      - static_volume:/static
+      - ./backend/media:/media
+    depends_on:
+      - django
+      - frontend
+      - ai
+
+  adminer:
+    image: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+
+volumes:
+  db-data:
+  static_volume:
+  ai-cache:

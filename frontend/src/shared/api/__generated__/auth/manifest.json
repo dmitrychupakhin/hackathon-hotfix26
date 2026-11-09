@@ -1,0 +1,20 @@
+{
+  "endpoints": [
+    "usersLoginCreate",
+    "usersLogoutCreate",
+    "usersRefreshCreate",
+    "usersVkLoginCreate"
+  ],
+  "hooks": [
+    "useUsersLoginCreateMutation",
+    "useUsersLogoutCreateMutation",
+    "useUsersRefreshCreateMutation",
+    "useUsersVkLoginCreateMutation"
+  ],
+  "serverMethods": [
+    "usersLoginCreate",
+    "usersLogoutCreate",
+    "usersRefreshCreate",
+    "usersVkLoginCreate"
+  ]
+}

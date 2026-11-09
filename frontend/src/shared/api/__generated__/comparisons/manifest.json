@@ -1,0 +1,27 @@
+{
+  "endpoints": [
+    "comparisonsList",
+    "comparisonsCreate",
+    "comparisonsRetrieve",
+    "comparisonsAnswersRetrieve",
+    "comparisonsReportRetrieve"
+  ],
+  "hooks": [
+    "useComparisonsListQuery",
+    "useLazyComparisonsListQuery",
+    "useComparisonsCreateMutation",
+    "useComparisonsRetrieveQuery",
+    "useLazyComparisonsRetrieveQuery",
+    "useComparisonsAnswersRetrieveQuery",
+    "useLazyComparisonsAnswersRetrieveQuery",
+    "useComparisonsReportRetrieveQuery",
+    "useLazyComparisonsReportRetrieveQuery"
+  ],
+  "serverMethods": [
+    "comparisonsList",
+    "comparisonsCreate",
+    "comparisonsRetrieve",
+    "comparisonsAnswersRetrieve",
+    "comparisonsReportRetrieve"
+  ]
+}

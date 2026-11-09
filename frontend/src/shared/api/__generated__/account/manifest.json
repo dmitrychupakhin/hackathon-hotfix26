@@ -1,0 +1,36 @@
+{
+  "endpoints": [
+    "usersEmailCreate",
+    "usersEmailConfirmCreate",
+    "usersMeRetrieve",
+    "usersMeUpdate",
+    "usersMePartialUpdate",
+    "usersMePhotoPartialUpdate",
+    "usersPasswordCreate",
+    "usersPasswordResetCreate",
+    "usersPasswordResetConfirmCreate"
+  ],
+  "hooks": [
+    "useUsersEmailCreateMutation",
+    "useUsersEmailConfirmCreateMutation",
+    "useUsersMeRetrieveQuery",
+    "useLazyUsersMeRetrieveQuery",
+    "useUsersMeUpdateMutation",
+    "useUsersMePartialUpdateMutation",
+    "useUsersMePhotoPartialUpdateMutation",
+    "useUsersPasswordCreateMutation",
+    "useUsersPasswordResetCreateMutation",
+    "useUsersPasswordResetConfirmCreateMutation"
+  ],
+  "serverMethods": [
+    "usersEmailCreate",
+    "usersEmailConfirmCreate",
+    "usersMeRetrieve",
+    "usersMePartialUpdate",
+    "usersMeUpdate",
+    "usersMePhotoPartialUpdate",
+    "usersPasswordCreate",
+    "usersPasswordResetCreate",
+    "usersPasswordResetConfirmCreate"
+  ]
+}

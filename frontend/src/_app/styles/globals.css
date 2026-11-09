@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-golos-text);
+}
+
+/* Figma Colors: actual swatch fills; text labels may be outdated. */
+@theme {
+  /* Figma text sizes, paired line heights and zero tracking. */
+  --text-*: initial;
+  --text-h1: 3rem;
+  --text-h1--line-height: calc(56 / 48);
+  --text-h1--letter-spacing: 0em;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: calc(44 / 36);
+  --text-h2--letter-spacing: 0em;
+  --text-h3: 2rem;
+  --text-h3--line-height: calc(40 / 32);
+  --text-h3--letter-spacing: 0em;
+  --text-h4: 1.75rem;
+  --text-h4--line-height: calc(36 / 28);
+  --text-h4--letter-spacing: 0em;
+  --text-h5: 1.5rem;
+  --text-h5--line-height: calc(32 / 24);
+  --text-h5--letter-spacing: 0em;
+  --text-h6: 1.25rem;
+  --text-h6--line-height: calc(28 / 20);
+  --text-h6--letter-spacing: 0em;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: calc(28 / 18);
+  --text-body-lg--letter-spacing: 0em;
+  --text-body-base: 1rem;
+  --text-body-base--line-height: calc(24 / 16);
+  --text-body-base--letter-spacing: 0em;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: calc(20 / 14);
+  --text-body-sm--letter-spacing: 0em;
+  --text-label-md: 0.75rem;
+  --text-label-md--line-height: calc(16 / 12);
+  --text-label-md--letter-spacing: 0em;
+  --text-label-sm: 0.625rem;
+  --text-label-sm--line-height: calc(12 / 10);
+  --text-label-sm--letter-spacing: 0em;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Shared interaction timing, matching Beady's 300ms ease transition. */
+  --motion-duration-interaction: 300ms;
+  --ease-interaction: ease;
+
+  /* Figma /shadow/base and shadow/sm; effect radii converted to CSS blur. */
+  --shadow-selector-thumb: 0 1px 1.7px #0000000f, 0 1px 2.55px #0000001a;
+  --shadow-selector-thumb-disabled: 0 1px 1.7px #0000000d;
+
+  /* Figma context menu panel, with effect blur converted to CSS. */
+  --shadow-context-menu: 0 4px 10.2px #0a0a0a0a, 0 12px 27.2px #0a0a0a14;
+  --container-context-menu: 9.5625rem;
+  --container-dropdown: 15.625rem;
+  --spacing-dropdown-height: 19rem;
+
+  /* 4px base at a 16px root; half steps retain 2px precision. */
+  --spacing: 0.25rem;
+
+  /* Independent radii from Figma; component sizes choose their own step. */
+  --radius-*: initial;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+
+  --color-*: initial;
+  --color-accent-100: #f3f8ec;
+  --color-accent-200: #dfeecf;
+  --color-accent-300: #c5e0a7;
+  --color-accent-400: #abd37a;
+  --color-accent-500: #8bb85a;
+  --color-accent-600: #6d963f;
+  --color-content-0: #ffffff;
+  --color-content-50: #f7f7f8;
+  --color-content-100: #eeeef2;
+  --color-content-200: #d8d8df;
+  --color-content-300: #b9bac3;
+  --color-content-400: #9394a2;
+  --color-content-500: #73737f;
+  --color-content-600: #646573;
+  --color-content-700: #4a4b5a;
+  --color-content-800: #3b3c47;
+  --color-content-900: #2c2c33;
+  --color-content-950: #1b1b1f;
+  --color-dom-light: #fafafa;
+  --color-dom-dark: #050720;
+  --color-special-100: #18260d;
+  --color-special-200: #f5f6f4;
+  --color-special-300: #e5e5e5;
+  --color-special-302: #a1a1a1;
+  --color-error-600: #d32f2f;
+  --color-notification-ok-bg: #f0fff1;
+  --color-notification-ok: #388e3c;
+  --color-notification-warning-bg: #fffcf0;
+  --color-notification-warning: #f5be0b;
+  --color-notification-error-bg: #fff7f8;
+  --color-context-menu-border: #00000014;
+}
+
+/* Reuse for color/outline/shadow state changes on interactive controls. */
+@utility transition-interaction {
+  transition-property:
+    color, background-color, border-color, outline-color, box-shadow;
+  transition-duration: var(--motion-duration-interaction);
+  transition-timing-function: var(--ease-interaction);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+@utility scrollbar-dropdown {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-400) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-accent-400);
+    border-radius: calc(infinity * 1px);
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}
+
+@layer base {
+  body {
+    @apply text-body-base font-normal;
+    background: var(--color-dom-light);
+    color: var(--color-content-900);
+  }
+}
+
+@supports (interpolate-size: allow-keywords) and
+  (transition-behavior: allow-discrete) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-slot="card-question"] {
+      interpolate-size: allow-keywords;
+      transition:
+        background-color 300ms ease,
+        box-shadow 300ms ease;
+    }
+
+    [data-slot="card-question"]::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 300ms ease,
+        content-visibility 300ms allow-discrete;
+    }
+
+    [data-slot="card-question"][open]::details-content {
+      block-size: auto;
+    }
+  }
+}

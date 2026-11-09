@@ -1,0 +1,12 @@
+{
+  "endpoints": [
+    "usersRetrieve"
+  ],
+  "hooks": [
+    "useUsersRetrieveQuery",
+    "useLazyUsersRetrieveQuery"
+  ],
+  "serverMethods": [
+    "usersRetrieve"
+  ]
+}

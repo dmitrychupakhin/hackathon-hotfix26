@@ -1,0 +1,26 @@
+# Local development/test database only. Production DB/schema are created by backend/deployment.
+services:
+  ai:
+    environment:
+      AI_DATABASE_URL: postgresql://onsoft:local_test_only@postgres:5432/onsoft
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: onsoft
+      POSTGRES_USER: onsoft
+      POSTGRES_PASSWORD: local_test_only
+    ports:
+      - "127.0.0.1:${AI_LOCAL_PG_PORT:-55432}:5432"
+    volumes:
+      - local-pg-data:/var/lib/postgresql/data
+      - ./sql/001_ai_schema.sql:/docker-entrypoint-initdb.d/001_ai_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onsoft -d onsoft"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+volumes:
+  local-pg-data:
